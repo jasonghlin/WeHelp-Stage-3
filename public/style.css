@@ -1,0 +1,33 @@
+h1 {
+    text-align: center;
+}
+
+.post-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.post-form > div {
+    margin-bottom: 1rem;
+}
+
+#paragraph {
+    box-sizing: border-box;
+    width: 15rem;
+    padding: .5rem;
+    
+}
+
+button {
+    width: 3rem
+}
+
+img {
+    width: 32rem;
+    height: 18rem
+}
+
+hr {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
