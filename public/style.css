@@ -24,7 +24,8 @@ button {
 
 img {
     width: 32rem;
-    height: 18rem
+    height: 18rem;
+    object-fit: cover;
 }
 
 hr {
