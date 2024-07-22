@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 
 const { AWS_ACCESS_KEY, AWS_SECRET_KEY, CDN_URL } = process.env;
 const app = express();
-const port = 3000;
+const port = 8000;
 
 // 設置靜態文件夾
 app.use(express.static(path.join(__dirname, "public")));
