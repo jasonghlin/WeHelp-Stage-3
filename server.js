@@ -46,7 +46,7 @@ app.get("/api/getFullBoard", async (req, res) => {
   res.json({ data: response });
 });
 
-app.post("/api/upload", upload.single("file"), (req, res) => {
+app.post("/api/upload", upload.single("file"), async (req, res) => {
   const file = req.file;
   const message = req.body.message; // 獲取 message
 
@@ -54,28 +54,47 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
     return res.status(400).send("No file uploaded.");
   }
 
-  const params = {
+  const listParams = {
     Bucket: "taipei-day-trip-s3-bucket",
-    Key: `${folderName}/${file.originalname}`,
-    Body: file.buffer,
+    Prefix: `${folderName}/`,
   };
 
-  s3.upload(params, (err, data) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("文件上傳失敗");
-    } else {
-      const imgUrl = `${CDN_URL}/${folderName}/${file.originalname}`;
-      try {
-        const response = insertTable(message, imgUrl);
-      } catch (error) {
-        console.log(error);
-      }
-      res.status(200).json({
-        success: true,
-      });
+  try {
+    const data = await s3.listObjectsV2(listParams).promise();
+    const fileNames = data.Contents.map((item) => item.Key);
+    let i = 1;
+    let newFileName = `${folderName}/${file.originalname}`;
+    while (fileNames.includes(newFileName)) {
+      newFileName = `${folderName}/${i}_${file.originalname}`;
+      i++;
     }
-  });
+
+    const params = {
+      Bucket: "taipei-day-trip-s3-bucket",
+      Key: `${newFileName}`,
+      Body: file.buffer,
+    };
+
+    s3.upload(params, (err, data) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("文件上傳失敗");
+      } else {
+        const imgUrl = `${CDN_URL}/${newFileName}`;
+        try {
+          const response = insertTable(message, imgUrl);
+        } catch (error) {
+          console.log(error);
+        }
+        res.status(200).json({
+          success: true,
+        });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("列出檔案失敗");
+  }
 });
 
 // 啟動伺服器
