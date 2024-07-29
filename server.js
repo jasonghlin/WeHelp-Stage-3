@@ -97,6 +97,13 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
   }
 });
 
+// 处理 Loader.io 验证文件请求
+app.get("/loaderio-5d904241a759a44c6a502741fd0547dc.txt", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "loaderio-5d904241a759a44c6a502741fd0547dc.txt")
+  );
+});
+
 // 啟動伺服器
 app.listen(port, () => {
   console.log(`伺服器正在 http://localhost:${port} 上運行`);
